@@ -18,38 +18,45 @@ import (
 // CreateProduct Method
 func (server *Server) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
+	// read the input body
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
+
 	product := models.Product{}
 	err = json.Unmarshal(body, &product)
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
+
 	product.Prepare()
 	err = product.Validate()
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
+
 	uid, err := auth.ExtractTokenID(r)
 	if err != nil {
 		responses.ERROR(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 		return
 	}
+	fmt.Println(product.AttendantID)
 	if uid != product.AttendantID {
 		responses.ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
 		return
 	}
+
 	productCreated, err := product.SaveProduct(server.DB)
-	if err != nil {
-		formattedError := formaterror.FormatError(err.Error())
-		responses.ERROR(w, http.StatusInternalServerError, formattedError)
-		return
-	}
+	fmt.Println("error", err, "product", productCreated)
+	// if err != nil {
+	// 	formattedError := formaterror.FormatError(err.Error())
+	// 	responses.ERROR(w, http.StatusInternalServerError, formattedError)
+	// 	return
+	// }
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.URL.Path, productCreated.ID))
 	responses.JSON(w, http.StatusCreated, productCreated)
 }
@@ -120,6 +127,7 @@ func (server *Server) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 		return
 	}
+
 	// Read the data posted
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {

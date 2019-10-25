@@ -12,9 +12,9 @@ import (
 // Product struct
 type Product struct {
 	ID          uint64    `gorm:"primary_key;auto_increment" json:"id"`
-	Name        string    `gorm:"size:255;not null;unique" json:"name"`
+	Name        string    `gorm:"size:255;not null" json:"name"`
 	Description string    `gorm:"size:255;not null;" json:"description"`
-	Price       uint32    `json:"price"`
+	Price       string    `gorm:"size:255;not null;" json:"price"`
 	Attendant   User      `gorm:"not null" json:"attendant"`
 	AttendantID uint32    `gorm:"not null" json:"attendant_id"`
 	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
@@ -26,6 +26,7 @@ func (p *Product) Prepare() {
 	p.ID = 0
 	p.Name = html.EscapeString(strings.TrimSpace(p.Name))
 	p.Description = html.EscapeString(strings.TrimSpace(p.Description))
+	p.Price = html.EscapeString(strings.TrimSpace(p.Price))
 	p.Attendant = User{}
 	p.CreatedAt = time.Now()
 	p.UpdatedAt = time.Now()
@@ -40,8 +41,11 @@ func (p *Product) Validate() error {
 	if p.Description == "" {
 		return errors.New("Required Description")
 	}
-	if p.Price < 1 {
+	if p.Price == "" {
 		return errors.New("Required Price")
+	}
+	if p.AttendantID < 1 {
+		return errors.New("Required ID")
 	}
 	return nil
 }
@@ -71,10 +75,11 @@ func (p *Product) FindAllProducts(db *gorm.DB) (*[]Product, error) {
 		return &[]Product{}, err
 	}
 	if len(products) > 0 {
+
 		for i := range products {
-			err := db.Debug().Model(&User{}).Where("id = ?", products[i].AttendantID).Take(&products[i].Price).Error
+			err := db.Debug().Model(&User{}).Where("id = ?", products[i].AttendantID).Take(&products[i].Attendant).Omit(p.Attendant.Password).Error
 			if err != nil {
-				return &[]Product{}, err
+				return &products, err
 			}
 		}
 	}

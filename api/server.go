@@ -5,17 +5,17 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/abejide001/Store_Manager_GO/api/controllers"
+	"github.com/joho/godotenv"
 )
 
 var server = controllers.Server{}
 
+// Run Method
 func Run() {
 
 	var err error
-	err = godotenv.Load()
-	if err != nil {
+	if err = godotenv.Load(); err != nil {
 		log.Fatalf("Error getting env, not comming through %v", err)
 	} else {
 		fmt.Println("We are getting the env values")
