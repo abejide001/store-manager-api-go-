@@ -15,6 +15,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// CreateProduct Method
 func (server *Server) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
@@ -53,10 +54,10 @@ func (server *Server) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusCreated, productCreated)
 }
 
+// GetProducts Method
 func (server *Server) GetProducts(w http.ResponseWriter, r *http.Request) {
 
 	product := models.Product{}
-
 	products, err := product.FindAllProducts(server.DB)
 	if err != nil {
 		responses.ERROR(w, http.StatusInternalServerError, err)
@@ -65,6 +66,7 @@ func (server *Server) GetProducts(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusOK, products)
 }
 
+// GetProduct Method
 func (server *Server) GetProduct(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -83,6 +85,7 @@ func (server *Server) GetProduct(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusOK, productReceived)
 }
 
+// UpdateProduct Method
 func (server *Server) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

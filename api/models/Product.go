@@ -103,9 +103,9 @@ func (p *Product) UpdateAProduct(db *gorm.DB, pid uint64) (*Product, error) {
 	var err error
 	db = db.Debug().Model(&Product{}).Where("id = ?", pid).Take(&Product{}).UpdateColumns(
 		map[string]interface{}{
-			"name":      p.Name,
-			"description":    p.Description,
-			"updated_at": time.Now(),
+			"name":        p.Name,
+			"description": p.Description,
+			"updated_at":  time.Now(),
 		},
 	)
 	err = db.Debug().Model(&Product{}).Where("id = ?", pid).Take(&p).Error
