@@ -33,10 +33,17 @@ $ ./main.go
 
 API BASE URL http://localhost:8080/api/v1. It's recommended to attach a `Authorization` Header containing the generated `token` from `/api/auth/login` to all access all requests.
 
+### Authentication endpoints `/api/v1/auth`
+
+| method | route        | description               | data                                          |
+| ------ | ------------ | ------------------------- | ----------------------------------------------|
+| POST   | /auth/login  | Sign In                   | `{email, password}`                           |
+| POST   | /auth/signup | Sign up                   | `{email, password}`                           |
+
 ### Products endpoints `/api/v1/products`
 
 | method | route          | description             | data                                               |
-| ------ | -------------- | ----------------------- | ---------------------------------------------------| 
+| ------ | -------------- | ----------------------- | ---------------------------------------------------|
 | GET    | /products      | Get all store products  |                                                    |
 | GET    | /products/:id  | Get a product           |                                                    |
 | POST   | /products      | Create a product        |`{name, price, description, attendant_id}`          |
